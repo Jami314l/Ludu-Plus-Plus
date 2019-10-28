@@ -48,7 +48,7 @@ int main()
     font2.loadFromFile("data/fonts/COOPBL.ttf");
     font3.loadFromFile("data/fonts/ALGER.ttf");
     RenderWindow WelcomeWindow(VideoMode(1003, 564), "Welcome");
-    Texture w_background, w_logo;
+    Texture w_background, w_logo, wlcm;
     Text w_t("Welcome To", font1, 75);
     Text t1("LUDU", font2, 100);
     Text t2("PLUS", font2, 75);
@@ -63,9 +63,12 @@ int main()
     ins.setPosition(175, 500);
     w_background.loadFromFile("data/image/ww.png");
     w_logo.loadFromFile("data/image/img1.png");
+    wlcm.loadFromFile("data/image/wlcm.png");
 
-    Sprite logo_s(w_logo), b_s(w_background);
+
+    Sprite logo_s(w_logo), b_s(w_background), wwlcm(wlcm);
     logo_s.setPosition(250, 600);
+    wwlcm.setScale(Vector2f(0.25, 0.25));
     logoObj.ypos=630;
     logoObj.xpos=250;
 
@@ -94,6 +97,7 @@ int main()
             t1_o.update(false, false, false, false);
             if(f1)
                 t1_o.update(true, false, true, false);
+                WelcomeWindow.draw(wwlcm);
             WelcomeWindow.draw(w_t);
             WelcomeWindow.draw(dv);
             timer++;
@@ -157,6 +161,18 @@ int main()
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
     while(flag--)
     {
 
@@ -216,6 +232,10 @@ int main()
             ManuWindow.draw(Rectangle);
             ManuWindow.display();
         }
+
+
+
+
 
 
         Namebackground.loadFromFile("data/image/NameInputBg.png");
@@ -393,7 +413,7 @@ int main()
                 }
 
 
-                p1.setPosition(150, 100);
+                p1.setPosition(150, 97);
                 p2.setPosition(150, 160);
                 p3.setPosition(150, 220);
                 p4.setPosition(150, 280);
