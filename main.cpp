@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include<SFML/Audio.hpp>
 #include<iostream>
 #include<sstream>
 using namespace sf;
@@ -39,7 +40,22 @@ public:
 
 int main()
 {
-
+//sound
+    sf::SoundBuffer buffer;
+    if(!buffer.loadFromFile("click.wav"))
+    {
+        cout<<"ERROR"<<endl;
+    }
+    sf::Sound sound;
+    sound.setBuffer(buffer);
+    sound.play();
+    //music
+    sf::Music music;
+    if(!music.openFromFile("MainMusic.ogg"))
+    {
+        cout<<"ERROR"<<endl;
+    }
+    music.play();
 
 
     playerClass logoObj, t1_o, t2_o, t3_o;
