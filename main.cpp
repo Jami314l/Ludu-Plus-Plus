@@ -399,6 +399,11 @@ int main()
         //Show.setColor(Color::Cyan);
         int cchoose=0;
         Sprite cchar(chchar);
+        int cate=0, nate=0, nametimer=0;
+        Texture cats, nats;
+        cats.loadFromFile("data/image/cat.png");
+        nats.loadFromFile("data/image/nat.png");
+        Sprite cat(cats), nat(nats);
         while(NameWindow.isOpen())
         {
             Vector2i mpos=Mouse::getPosition(NameWindow);
@@ -406,7 +411,15 @@ int main()
             name_window_counter++;
             Event Event;
             NameWindow.draw(NB);
-
+            if(cate||nate)
+                nametimer++;
+            if(nametimer>1000)
+            {
+                cate=0;
+                nate=0;
+            }
+            cat.setPosition(Vector2f(nametimer/2, 288));
+            nat.setPosition(Vector2f(nametimer/2, 288));
             while(NameWindow.pollEvent(Event))
             {
                 switch (Event.type)
@@ -455,15 +468,27 @@ int main()
                                 charofplayer[p]=15;
                         }
                     }
-
-
-                    p++;
-                    if(p>TotalPlayer)
+                    for(int i=1; i<p; i++)
                     {
-                        p=1;
-                        NameWindow.close();
+                        if(charofplayer[i]==charofplayer[p])
+                            charofplayer[p]=0;
                     }
-                    cchoose=0;
+                    if(charofplayer[p])
+                    {
+                        cate=0;
+                        p++;
+                        if(p>TotalPlayer)
+                        {
+                            p=1;
+                            NameWindow.close();
+                        }
+                        cchoose=0;
+                    }
+                    else
+                    {
+                        cate=1;
+                        nametimer=0;
+                    }
                 }
                 case Event::TextEntered:
                 {
@@ -475,27 +500,37 @@ int main()
                     }
                     else if(static_cast<int>(Event.text.unicode)==13)
                     {
-                        if(p==1)
-                            Name1.setString(NameTemp);
-                        else if(p==2)
-                            Name2.setString(NameTemp);
-                        else if(p==3)
-                            Name3.setString(NameTemp);
-                        else if(p==4)
-                            Name4.setString(NameTemp);
-                        else if(p==5)
-                            Name5.setString(NameTemp);
-                        else if(p==6)
-                            Name6.setString(NameTemp);
-                        else if(p==7)
-                            Name7.setString(NameTemp);
-                        else if(p==8)
-                            Name8.setString(NameTemp);
-                        PlayerName[p]=NameTemp;
-                        NameTemp="";
-                        CurrentName.setString(NameTemp);
-                        Blinker.setString(NameTemp+"|");
-                        cchoose=1;
+                        for(int i=1; i<p; i++)
+                            if(PlayerName[i]==NameTemp)
+                                nate=1;
+                        if(!nate)
+                        {
+                            if(p==1)
+                                Name1.setString(NameTemp);
+                            else if(p==2)
+                                Name2.setString(NameTemp);
+                            else if(p==3)
+                                Name3.setString(NameTemp);
+                            else if(p==4)
+                                Name4.setString(NameTemp);
+                            else if(p==5)
+                                Name5.setString(NameTemp);
+                            else if(p==6)
+                                Name6.setString(NameTemp);
+                            else if(p==7)
+                                Name7.setString(NameTemp);
+                            else if(p==8)
+                                Name8.setString(NameTemp);
+                            PlayerName[p]=NameTemp;
+                            NameTemp="";
+                            CurrentName.setString(NameTemp);
+                            Blinker.setString(NameTemp+"|");
+                            cchoose=1;
+                        }
+                        else
+                        {
+                            nametimer=0;
+                        }
                     }
                     else if(static_cast<int>(Event.text.unicode)==8)
                     {
@@ -774,6 +809,10 @@ int main()
             NameWindow.draw(Show);
             if(cchoose)
                 NameWindow.draw(cchar);
+            if(cate)
+                NameWindow.draw(cat);
+            if(nate)
+                NameWindow.draw(nat);
             NameWindow.display();
         }
 
@@ -1441,6 +1480,9 @@ int main()
         cmov.setPosition(Vector2f(566, 412));
         int gtimer=0, playertimer=-1, currentplayer=1, score, dice=0, pn=0, ice=1;
         int ptrpos[7]= {1530, 100, 151, 202, 253, 304, 355};
+        int rg=0;
+        for(int i=1; i<7; i++)
+            rg+=PlayerName[i].size();
         while (GameWindow.isOpen())
         {
 
@@ -1581,7 +1623,7 @@ int main()
                 {
                     snd.setBuffer(rol);
                     snd.play();
-                    score=(rand()+x+y+gtimer)%6+1;
+                    score=(rand()+x+y+gtimer+rg)%6+1;
                     dice=1;
                     gtimer=0;
                     ice=0;
@@ -1784,23 +1826,23 @@ int main()
             if(pn&&Event.type==Event::MouseButtonPressed)
             {
                 if(position[currentplayer][pn]!=position[currentplayer][5])
-                if(dice)
-                {
-                    spos(currentplayer, score, pn);
-                    snd.setBuffer(mv);
-                    snd.play();
-                    if(score!=6)
-                        currentplayer++;
-                    if(currentplayer==7)
-                        currentplayer=1;
-                    while(victory[currentplayer])
+                    if(dice)
                     {
-                        currentplayer++;
+                        spos(currentplayer, score, pn);
+                        snd.setBuffer(mv);
+                        snd.play();
+                        if(score!=6)
+                            currentplayer++;
                         if(currentplayer==7)
                             currentplayer=1;
+                        while(victory[currentplayer])
+                        {
+                            currentplayer++;
+                            if(currentplayer==7)
+                                currentplayer=1;
+                        }
+                        dice=0;
                     }
-                    dice=0;
-                }
             }
             if(pn&&dice&&gtimer>500)
             {
